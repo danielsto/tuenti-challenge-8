@@ -9,11 +9,20 @@ major = [2, 2, 1, 2, 2, 2, 1]
 minor = [2, 1, 2, 2, 1, 2, 2]
 
 notes = {'A': 0, 'A#': 1, 'B': 2, 'C': 3, 'C#': 4, 'D': 5, 'D#': 6, 'E': 7, 'F': 8, 'F#': 9, 'G': 10, 'G#': 11}
+notes_dict = {'A': 0, 'A#': 1, 'B': 2, 'C': 3, 'C#': 4, 'D': 5, 'D#': 6, 'E': 7, 'F': 8, 'F#': 9, 'G': 10, 'G#': 11}
 
 
 def flat_to_sharp(note):
-    code = notes[note[0]] - 1
-    return list(notes.keys())[list(notes.values()).index(code)]
+    # print("CONVERSION", note, note[0], notes_dict[note[0]])
+    code = notes_dict[note[0]] - 1
+    if code < 0:
+        code = 11
+    return list(notes_dict.keys())[list(notes_dict.values()).index(code)]
+
+
+def sharp_to_natural(note):
+    code = notes_dict[note[0]] + 1
+    return list(notes_dict.keys())[list(notes_dict.values()).index(code)]
 
 
 def get_scale(key):
@@ -64,16 +73,40 @@ with open(in_file_path, 'r') as infile:
     with open(out_file_path, 'w') as outfile:
         cases = int(infile.readline())
         for case in range(cases):
+            print("Case #" + str(case + 1))
             notes = (infile.readline().rstrip())
             # print(notes)
 
             res = []
 
             if notes != '0':
-                print('Calculating keys...')
+                # print('Calculating keys...')
                 piece = (infile.readline().rstrip().split(' '))
                 piece = [key for key, grp in groupby(piece)]
-                print('PIECE:', piece)
+
+                print("PIECE:", piece)
+                for i, element in enumerate(piece):
+                    if len(element) == 2 and element[1] == 'b':
+                        # print('ELEMENT:', element)
+                        element = flat_to_sharp(element)
+                        # print('ELEMENT:', element)
+                        # add/replace to piece
+                        piece[i] = element
+                    elif element == 'B#' or element == 'E#':
+                        element = sharp_to_natural(element)
+                        piece[i] = element
+                print("PIECE2:", piece)
+
+                for element in all_scales:
+                    if set(piece).issubset(set(all_scales[element])):
+                        print(element)
+                        res.append(element)
+                        res.sort()
+                if len(res) > 0:
+                    res = ' '.join(res)
+                else:
+                    res = None
+                print(res)
             else:
                 # Include all possible keys
                 print('--- All possible keys ---')
@@ -81,4 +114,5 @@ with open(in_file_path, 'r') as infile:
                     res.append(element)
                     res.sort()
                 res = ' '.join(res)
-            # outfile.write("Case #" + str(case + 1) + ": " + str(res) + "\n")
+                print(res)
+            outfile.write("Case #" + str(case + 1) + ": " + str(res) + "\n")
