@@ -59,8 +59,8 @@ def generate_all_scales():
 
 all_scales = generate_all_scales()
 
-in_file_path = os.path.join(os.path.dirname(__file__), "testInput")
-out_file_path = os.path.join(os.path.dirname(__file__), "testOutput.txt")
+in_file_path = os.path.join(os.path.dirname(__file__), "submitInput")
+out_file_path = os.path.join(os.path.dirname(__file__), "submitOutput.txt")
 
 with open(in_file_path, 'r') as infile:
     with open(out_file_path, 'w') as outfile:
